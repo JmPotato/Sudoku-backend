@@ -1,17 +1,20 @@
 package models
 
 import (
-	"github.com/jinzhu/gorm"
+	"time"
 
 	// Import go-sql-driver
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
-func connectDatabase() {
-	db, err := gorm.Open("mysql", "user:password@/dbname?charset=utf8&parseTime=True&loc=Local")
-	if err != nil {
-		panic("failed to connect database.")
-	}
-	defer db.Close()
-	// To-do: initilize the User table.
+// User model
+type User struct {
+	UID            uint32 `gorm:"primary_key"`
+	Type           uint8
+	Username       string
+	Authentication string
+	Score          uint32
+	Submited       uint32
+	Passed         uint32
+	CreatedTime    time.Time
 }
