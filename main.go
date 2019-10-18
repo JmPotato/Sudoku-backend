@@ -5,9 +5,13 @@ import (
 	"net/http"
 
 	"github.com/JmPotato/Sudoku-backend/handlers"
+	"github.com/julienschmidt/httprouter"
 )
 
 func main() {
-	http.HandleFunc("/", handlers.HomeHandler) // each request calls handler
-	log.Fatal(http.ListenAndServe("localhost:8000", nil))
+	router := httprouter.New()
+	router.GET("/", handlers.HomeHandler)
+	router.GET("/user/:username", handlers.UserHandler)
+
+	log.Fatal(http.ListenAndServe("localhost:8080", router))
 }

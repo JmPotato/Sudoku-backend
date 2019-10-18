@@ -18,3 +18,12 @@ type User struct {
 	Passed         uint32
 	CreatedTime    time.Time
 }
+
+// CheckUserName checks whether the username exists.
+func (user *User) CheckUserName(username string) (result bool) {
+	db.Where("username = ?", username).First(user)
+	if user.Username != username {
+		return true
+	}
+	return false
+}
