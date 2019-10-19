@@ -2,9 +2,6 @@ package models
 
 import (
 	"time"
-
-	// Import go-sql-driver
-	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
 // Puzzle model

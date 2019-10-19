@@ -4,9 +4,12 @@ import (
 	"log"
 	"sync"
 
+	// Import go-sql-driver
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
+// DatabaseInstance is a singleton pattern database instance.
 type DatabaseInstance struct {
 }
 
@@ -17,6 +20,7 @@ var db *gorm.DB
 var dbErr error
 
 func getInstance() *DatabaseInstance {
+	// Make sure a singleton pattern
 	once.Do(func() {
 		instance = &DatabaseInstance{}
 	})

@@ -9,4 +9,5 @@ require (
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/mattn/go-colorable v0.1.4 // indirect
 	github.com/mattn/go-isatty v0.0.10 // indirect
+	golang.org/x/tools v0.0.0-20191018000036-341939e08647 // indirect
 )

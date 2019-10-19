@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+// Response is the data struct used to response a request.
 type Response struct {
 	Message string      `json:"message"`
 	Data    interface{} `json:"data"`
@@ -19,6 +20,7 @@ func SendResponse(w http.ResponseWriter, data interface{}, err error) error {
 	} else {
 		res = Response{Message: "Success", Data: data}
 	}
+
 	if err := json.NewEncoder(w).Encode(res); err != nil {
 		return err
 	}

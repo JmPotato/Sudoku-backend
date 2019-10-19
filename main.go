@@ -8,10 +8,27 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
+type Logger struct {
+	handler http.Handler
+}
+
+func (l Logger) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	log.Printf("%s %s", r.Method, r.URL.Path)
+	l.handler.ServeHTTP(w, r)
+}
+
 func main() {
 	router := httprouter.New()
-	router.GET("/", handlers.HomeHandler)
-	router.GET("/user/:username", handlers.UserHandler)
 
-	log.Fatal(http.ListenAndServe("localhost:8080", router))
+	// Other handlers
+	router.GET("/", handlers.HomeHandler)
+
+	// User handlers
+	router.GET("/user", handlers.GetUserHandler)
+	router.POST("/user", handlers.CreatUserHandler)
+	router.DELETE("/user", handlers.DeleteUserHandler)
+
+	// Puzzle handlers
+
+	log.Fatal(http.ListenAndServe("localhost:8080", Logger{router}))
 }
