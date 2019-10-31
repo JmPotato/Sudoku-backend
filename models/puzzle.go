@@ -15,3 +15,8 @@ type Puzzle struct {
 	Passed      uint32    `gorm:"column:passed" json:"passed"`
 	CreatedTime time.Time `gorm:"column:created_time" json:"created_time"`
 }
+
+//GetPuzzleByPID gets a puzzle by its PID
+func (p *Puzzle) GetPuzzleByPID(pid uint32) error {
+	return db.Where("pid = ?", pid).First(p).Error
+}

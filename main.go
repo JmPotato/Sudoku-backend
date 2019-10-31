@@ -29,6 +29,7 @@ func main() {
 	router.DELETE("/user", handlers.DeleteUserHandler)
 
 	// Puzzle handlers
+	router.GET("/puzzle", handlers.GetPuzzleHandler)
 
 	log.Fatal(http.ListenAndServe("localhost:8080", Logger{router}))
 }
