@@ -17,14 +17,14 @@ func GetPuzzleHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Param
 	puzzle := new(models.Puzzle)
 	var err error
 	if pid != 0 {
-		log.Printf("finding pid=%d\n", pid)
+		log.Printf("Finding pid=%d\n", pid)
 		err = puzzle.GetPuzzleByPID(uint32(pid))
 	} else {
-		err = errors.New("no parameters")
+		err = errors.New("No parameters")
 	}
 
 	if err != nil {
-		log.Printf("error: %s\n", err.Error())
+		log.Printf("Error: %s\n", err.Error())
 	}
 
 	SendResponse(w, puzzle, err)

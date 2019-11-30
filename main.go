@@ -13,6 +13,9 @@ type Logger struct {
 }
 
 func (l Logger) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// Allow cors
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
 	log.Printf("%s %s", r.Method, r.URL.Path)
 	l.handler.ServeHTTP(w, r)
 }
@@ -24,12 +27,13 @@ func main() {
 	router.GET("/", handlers.HomeHandler)
 
 	// User handlers
-	router.GET("/user", handlers.GetUserHandler)
-	router.POST("/user", handlers.CreatUserHandler)
-	router.DELETE("/user", handlers.DeleteUserHandler)
+	router.GET("/user/get", handlers.GetUserHandler)
+	router.POST("/user/check", handlers.CheckUserHandler)
+	router.POST("/user/create", handlers.CreatUserHandler)
+	router.DELETE("/user/delete", handlers.DeleteUserHandler)
 
 	// Puzzle handlers
-	router.GET("/puzzle", handlers.GetPuzzleHandler)
+	router.GET("/puzzle/get", handlers.GetPuzzleHandler)
 
 	log.Fatal(http.ListenAndServe("localhost:8080", Logger{router}))
 }

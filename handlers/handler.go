@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -14,6 +15,7 @@ type Response struct {
 // SendResponse sends the result and some other info to requester.
 func SendResponse(w http.ResponseWriter, data interface{}, err error) error {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	fmt.Printf("%s\n", w.Header())
 	var res Response
 	if err != nil {
 		res = Response{Message: err.Error(), Data: nil}
