@@ -54,3 +54,12 @@ func (u *User) DeleteUserByUID(uid uint32) error {
 	}
 	return db.Delete(u).Error
 }
+
+// SaveUserByUID saves an user's info if it already exists.
+func (u *User) SaveUserByUID(uid uint32) error {
+	db.Where("uid = ?", uid).First(u)
+	if u.UID == 0 {
+		return errors.New("user doesn't exist")
+	}
+	return db.Save(u).Error
+}

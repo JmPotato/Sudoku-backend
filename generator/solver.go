@@ -1,5 +1,7 @@
 package generator
 
+import "fmt"
+
 //Sudoku quastion board
 type Sudoku struct {
 	board  [9][9]byte
@@ -23,19 +25,36 @@ func NewSudoku(board [9][9]byte) *Sudoku {
 	return s
 }
 
-//SolveSudoku accept a 9*9 byte array and solve it
-func (s *Sudoku) SolveSudoku() bool {
-	for i := 0; i < 9; i++ {
-		for j := 0; j < 9; j++ {
-			if s.board[i][j] == '.' {
-				s.BackTrace(i, j)
-				if s.solved {
-					return true
-				}
+//Output the board
+func (s *Sudoku) Output() {
+	for _, row := range s.board {
+		for _, num := range row {
+			if rune(num) == '.' {
+				fmt.Printf("0 ")
+			} else {
+				fmt.Printf("%d ", int(num))
 			}
 		}
+		fmt.Printf("\n")
 	}
-	return false
+}
+
+//Remove number inp from (x, y)
+func (s *Sudoku) Remove(x, y int) {
+	val := int(s.board[x][y])
+	s.board[x][y] = '.'
+	s.rowMap[x*10+val] = false
+	s.colMap[y*10+val] = false
+	s.boxMap[(x/3)*100+(y/3)*10+val] = false
+}
+
+//Insert number inp into (x, y)
+func (s *Sudoku) Insert(x, y int, inp byte) {
+	s.board[x][y] = inp
+	val := int(inp)
+	s.rowMap[x*10+val] = true
+	s.colMap[y*10+val] = true
+	s.boxMap[(x/3)*100+(y/3)*10+val] = true
 }
 
 //CanInsert judge whether number inp can be inserted into (x, y)
@@ -50,27 +69,8 @@ func (s *Sudoku) CanInsert(x, y int, inp byte) bool {
 	return true
 }
 
-//Insert number inp into (x, y)
-func (s *Sudoku) Insert(x, y int, inp byte) {
-	s.board[x][y] = inp
-	val := int(inp)
-	s.rowMap[x*10+val] = true
-	s.colMap[y*10+val] = true
-	s.boxMap[(x/3)*100+(y/3)*10+val] = true
-}
-
-//Remove number inp from (x, y)
-func (s *Sudoku) Remove(x, y int) {
-	val := int(s.board[x][y])
-	s.board[x][y] = '.'
-	s.rowMap[x*10+val] = false
-	s.colMap[y*10+val] = false
-	s.boxMap[(x/3)*100+(y/3)*10+val] = false
-}
-
-//BackTrace use deep first search
+// BackTrace use deep first search
 func (s *Sudoku) BackTrace(x, y int) {
-	println("back trace", x, y)
 	if y == 9 {
 		x = x + 1
 		y = 0
@@ -80,7 +80,7 @@ func (s *Sudoku) BackTrace(x, y int) {
 		return
 	}
 	if s.board[x][y] == '.' {
-		for opt := 1; opt < 9; opt++ {
+		for opt := 1; opt <= 9; opt++ {
 			val := byte(opt)
 			if !s.CanInsert(x, y, val) {
 				continue
@@ -95,4 +95,17 @@ func (s *Sudoku) BackTrace(x, y int) {
 	} else {
 		s.BackTrace(x, y+1)
 	}
+}
+
+//SolveSudoku accept a 9*9 byte array and solve it
+func (s *Sudoku) SolveSudoku() bool {
+	for i := 0; i < 9; i++ {
+		for j := 0; j < 9; j++ {
+			if s.board[i][j] == '.' {
+				s.BackTrace(i, j)
+				return s.solved
+			}
+		}
+	}
+	return false
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
+// Logger middleware
 type Logger struct {
 	handler http.Handler
 }
@@ -34,6 +35,7 @@ func main() {
 
 	// Puzzle handlers
 	router.GET("/puzzle/get", handlers.GetPuzzleHandler)
+	router.POST("/puzzle/pass", handlers.PassPuzzleHandler)
 
 	log.Fatal(http.ListenAndServe("localhost:8080", Logger{router}))
 }
