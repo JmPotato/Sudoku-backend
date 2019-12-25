@@ -17,7 +17,7 @@ func (l Logger) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Allow cors
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
-	log.Printf("%s %s", r.Method, r.URL.Path)
+	log.Printf("Method:%s Router:%s", r.Method, r.URL.Path)
 	l.handler.ServeHTTP(w, r)
 }
 
@@ -36,6 +36,7 @@ func main() {
 	// Puzzle handlers
 	router.GET("/puzzle/get", handlers.GetPuzzleHandler)
 	router.POST("/puzzle/pass", handlers.PassPuzzleHandler)
+	router.POST("/puzzle/submit", handlers.SubmitPuzzleHandler)
 
 	log.Fatal(http.ListenAndServe("localhost:8080", Logger{router}))
 }

@@ -18,17 +18,17 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
 	user := new(models.User)
 	var err error
 	if uid != 0 {
-		log.Printf("finding uid=%d\n", uid)
+		log.Printf("[GetUserHandler] Finding uid=%d\n", uid)
 		err = user.GetUserByUID(uint32(uid))
 	} else if username != "" {
-		log.Printf("finding username=%s\n", username)
+		log.Printf("[GetUserHandler] Finding username=%s\n", username)
 		err = user.GetUserByUsername(username)
 	} else {
 		err = errors.New("no parameters")
 	}
 
 	if err != nil {
-		log.Printf("error: %s\n", err.Error())
+		log.Printf("[GetUserHandler] Error: %s\n", err.Error())
 	}
 
 	SendResponse(w, user, err)
@@ -45,7 +45,7 @@ func CheckUserHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Param
 		err = errors.New("Empty username or authentication")
 	} else if len(username) <= 20 && len(authentication) == 32 {
 		user := models.User{Username: username, Authentication: authentication, Type: uint8(1)}
-		log.Printf("Checking username=%s, type=%d\n", username, 1)
+		log.Printf("[GetUserHandler] Checking username=%s, type=%d\n", username, 1)
 		err = user.GetUserByUsername(username)
 		if user.Authentication != authentication {
 			err = errors.New("Authentication doesn't match the username")
@@ -73,14 +73,14 @@ func CreatUserHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Param
 		err = errors.New("Empty username or authentication")
 	} else if len(username) <= 20 && len(authentication) == 32 {
 		user := models.User{Username: username, Authentication: authentication, Type: uint8(userType)}
-		log.Printf("Creating username=%s, type=%d\n", username, userType)
+		log.Printf("[GetUserHandler] Creating username=%s, type=%d\n", username, userType)
 		err = user.CreateUser()
 	} else {
 		err = errors.New("Illegal username or authentication")
 	}
 
 	if err != nil {
-		log.Printf("Error: %s\n", err.Error())
+		log.Printf("[GetUserHandler] Error: %s\n", err.Error())
 	}
 	user.GetUserByUsername(username)
 
@@ -95,17 +95,17 @@ func DeleteUserHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Para
 	user := new(models.User)
 	var err error
 	if uid != 0 {
-		log.Printf("Deleting uid=%d\n", uid)
+		log.Printf("[GetUserHandler] Deleting uid=%d\n", uid)
 		err = user.DeleteUserByUID(uint32(uid))
 	} else if username != "" {
-		log.Printf("Deleting username=%s\n", username)
+		log.Printf("[GetUserHandler] Deleting username=%s\n", username)
 		err = user.DeleteUserByUsername(username)
 	} else {
 		err = errors.New("No parameters")
 	}
 
 	if err != nil {
-		log.Printf("Error: %s\n", err.Error())
+		log.Printf("[GetUserHandler] Error: %s\n", err.Error())
 	}
 
 	SendResponse(w, user, err)
