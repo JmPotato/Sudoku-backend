@@ -10,7 +10,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-//GetPuzzleHandler processes the GET request from /puzzle/get, gets a puzzle by its pid
+// GetPuzzleHandler processes the GET request from /puzzle/get, gets a puzzle by its pid
 func GetPuzzleHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	pid, _ := strconv.ParseUint(r.Header.Get("pid"), 10, 32)
 	level, _ := strconv.ParseUint(r.Header.Get("level"), 10, 8)
@@ -36,7 +36,7 @@ func GetPuzzleHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Param
 	SendResponse(w, puzzle, err)
 }
 
-//PassPuzzleHandler processes the POST request from /puzzle/pass, pass a puzzle by its pid for an uid
+// PassPuzzleHandler processes the POST request from /puzzle/pass, pass a puzzle by its pid for an uid
 func PassPuzzleHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	err := r.ParseForm()
 	pid, _ := strconv.ParseUint(r.Form.Get("pid"), 10, 32)

@@ -40,11 +40,11 @@ func CheckUserHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Param
 	username := r.Form.Get("username")
 	authentication := r.Form.Get("authentication")
 
-	user := new(models.User)
+	var user models.User
 	if username == "" || authentication == "" {
 		err = errors.New("Empty username or authentication")
 	} else if len(username) <= 20 && len(authentication) == 32 {
-		user := models.User{Username: username, Authentication: authentication, Type: uint8(1)}
+		user = models.User{Username: username, Authentication: authentication, Type: uint8(1)}
 		log.Printf("[GetUserHandler] Checking username=%s, type=%d\n", username, 1)
 		err = user.GetUserByUsername(username)
 		if user.Authentication != authentication {
