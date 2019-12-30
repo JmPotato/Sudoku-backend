@@ -11,7 +11,7 @@ type User struct {
 	Type           uint8     `gorm:"column:type" json:"type"`
 	Username       string    `gorm:"column:username" json:"username"`
 	Authentication string    `gorm:"column:authentication" json:"-"`
-	Score          uint32    `gorm:"column:score" json:"scroe"`
+	Score          uint32    `gorm:"column:score" json:"score"`
 	Submited       uint32    `gorm:"column:submited" json:"submited"`
 	Passed         uint32    `gorm:"column:passed" json:"passed"`
 	CreatedTime    time.Time `gorm:"column:created_time" json:"created_time"`
