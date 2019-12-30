@@ -16,6 +16,7 @@ type Logger struct {
 func (l Logger) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Allow cors
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "*")
 
 	log.Printf("Method:%s Router:%s", r.Method, r.URL.Path)
 	l.handler.ServeHTTP(w, r)
