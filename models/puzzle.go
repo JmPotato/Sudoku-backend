@@ -46,11 +46,11 @@ func (p *Puzzle) AddPuzzleByPID(pid uint32) error {
 	return db.Create(p).Error
 }
 
-// SavePuzzleByPID saves an user's info if it already exists.
+// SavePuzzleByPID saves a puzzle's info if it already exists.
 func (p *Puzzle) SavePuzzleByPID(pid uint32) error {
 	db.Where("pid = ?", pid).First(p)
-	if p.PID != 0 {
-		return errors.New("puzzle already exists")
+	if p.PID == 0 {
+		return errors.New("puzzle doesn't exist")
 	}
 	return db.Save(p).Error
 }

@@ -72,14 +72,14 @@ func SubmitPuzzleHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Pa
 		err = puzzle.SavePuzzleByPID(puzzle.PID)
 		if err != nil {
 			log.Printf("[SubmitPuzzleHandler] Error: %s\n", err.Error())
-		}
-
-		err = user.SaveUserByUID(user.UID)
-		if err != nil {
-			log.Printf("[SubmitPuzzleHandler] Error: %s\n", err.Error())
+		} else {
+			err = user.SaveUserByUID(user.UID)
+			if err != nil {
+				log.Printf("[SubmitPuzzleHandler] Error: %s\n", err.Error())
+			}
 		}
 	} else {
-		err = errors.New("wrong authentication")
+		err = errors.New("Wrong authentication")
 	}
 
 	SendResponse(w, user, err)
