@@ -36,56 +36,12 @@ func GetPuzzleHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Param
 	SendResponse(w, puzzle, err)
 }
 
-// PassPuzzleHandler processes the POST request from /puzzle/pass, pass a puzzle by its pid for an uid
-func PassPuzzleHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	err := r.ParseForm()
-	pid, _ := strconv.ParseUint(r.Form.Get("pid"), 10, 32)
-	uid, _ := strconv.ParseUint(r.Form.Get("uid"), 10, 32)
-	authentication := r.Form.Get("authentication")
-
-	puzzle := &models.Puzzle{
-		PID: uint32(pid),
-	}
-	err = puzzle.GetPuzzleByPID(puzzle.PID)
-	if err != nil {
-		log.Printf("[PassPuzzleHandler] Error: %s\n", err.Error())
-	}
-
-	user := &models.User{
-		UID: uint32(uid),
-	}
-	err = user.GetUserByUID(user.UID)
-	if err != nil {
-		log.Printf("[PassPuzzleHandler] Error: %s\n", err.Error())
-	}
-	if user.Authentication == authentication {
-		log.Printf("[PassPuzzleHandler] Passing pid=%d, uid=%d\n", pid, uid)
-		puzzle.Passed++
-
-		user.Score += 81 - uint32(puzzle.Level)
-		user.Passed++
-
-		err = puzzle.SavePuzzleByPID(puzzle.PID)
-		if err != nil {
-			log.Printf("[PassPuzzleHandler] Error: %s\n", err.Error())
-		}
-
-		err = user.SaveUserByUID(user.UID)
-		if err != nil {
-			log.Printf("[PassPuzzleHandler] Error: %s\n", err.Error())
-		}
-	} else {
-		err = errors.New("wrong authentication")
-	}
-
-	SendResponse(w, user, err)
-}
-
 // SubmitPuzzleHandler processes the POST request from /puzzle/submit, submit a puzzle by its pid for an uid
 func SubmitPuzzleHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	err := r.ParseForm()
 	pid, _ := strconv.ParseUint(r.Form.Get("pid"), 10, 32)
 	uid, _ := strconv.ParseUint(r.Form.Get("uid"), 10, 32)
+	passed, _ := strconv.ParseUint(r.Form.Get("passed"), 10, 32)
 	authentication := r.Form.Get("authentication")
 
 	puzzle := &models.Puzzle{
@@ -93,7 +49,7 @@ func SubmitPuzzleHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Pa
 	}
 	err = puzzle.GetPuzzleByPID(puzzle.PID)
 	if err != nil {
-		log.Printf("[PassPuzzleHandler] Error: %s\n", err.Error())
+		log.Printf("[SubmitPuzzleHandler] Error: %s\n", err.Error())
 	}
 
 	user := &models.User{
@@ -101,23 +57,26 @@ func SubmitPuzzleHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Pa
 	}
 	err = user.GetUserByUID(user.UID)
 	if err != nil {
-		log.Printf("[PassPuzzleHandler] Error: %s\n", err.Error())
+		log.Printf("[SubmitPuzzleHandler] Error: %s\n", err.Error())
 	}
 	if user.Authentication == authentication {
-		log.Printf("[PassPuzzleHandler] Submitting pid=%d, uid=%d\n", pid, uid)
+		log.Printf("[SubmitPuzzleHandler] Submitting pid=%d, uid=%d\n", pid, uid)
 		puzzle.Submited++
-
-		user.Score += 81 - uint32(puzzle.Level)
 		user.Submited++
+		if passed == 1 {
+			puzzle.Passed++
+			user.Passed++
+		}
+		user.Score += 81 - uint32(puzzle.Level)
 
 		err = puzzle.SavePuzzleByPID(puzzle.PID)
 		if err != nil {
-			log.Printf("[PassPuzzleHandler] Error: %s\n", err.Error())
+			log.Printf("[SubmitPuzzleHandler] Error: %s\n", err.Error())
 		}
 
 		err = user.SaveUserByUID(user.UID)
 		if err != nil {
-			log.Printf("[PassPuzzleHandler] Error: %s\n", err.Error())
+			log.Printf("[SubmitPuzzleHandler] Error: %s\n", err.Error())
 		}
 	} else {
 		err = errors.New("wrong authentication")

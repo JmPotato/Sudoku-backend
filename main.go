@@ -36,7 +36,6 @@ func main() {
 
 	// Puzzle handlers
 	router.GET("/puzzle/get", handlers.GetPuzzleHandler)
-	router.POST("/puzzle/pass", handlers.PassPuzzleHandler)
 	router.POST("/puzzle/submit", handlers.SubmitPuzzleHandler)
 
 	log.Fatal(http.ListenAndServe("localhost:8080", Logger{router}))
