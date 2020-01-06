@@ -43,21 +43,22 @@ func SubmitPuzzleHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Pa
 	uid, _ := strconv.ParseUint(r.Form.Get("uid"), 10, 32)
 	passed, _ := strconv.ParseUint(r.Form.Get("passed"), 10, 32)
 	authentication := r.Form.Get("authentication")
-
 	puzzle := &models.Puzzle{
 		PID: uint32(pid),
 	}
+	log.Printf("[SubmitPuzzleHandler] Finding pid=%d\n", pid)
 	err = puzzle.GetPuzzleByPID(puzzle.PID)
 	if err != nil {
-		log.Printf("[SubmitPuzzleHandler] Error: %s\n", err.Error())
+		log.Printf("[SubmitPuzzleHandler] Get Puzzle Error: %s\n", err.Error())
 	}
 
 	user := &models.User{
 		UID: uint32(uid),
 	}
+	log.Printf("[SubmitPuzzleHandler] Finding uid=%d\n", uid)
 	err = user.GetUserByUID(user.UID)
 	if err != nil {
-		log.Printf("[SubmitPuzzleHandler] Error: %s\n", err.Error())
+		log.Printf("[SubmitPuzzleHandler] Get User Error: %s\n", err.Error())
 	}
 	if user.Authentication == authentication {
 		log.Printf("[SubmitPuzzleHandler] Submitting pid=%d, uid=%d\n", pid, uid)
@@ -68,14 +69,13 @@ func SubmitPuzzleHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Pa
 			user.Passed++
 		}
 		user.Score += 81 - uint32(puzzle.Level)
-
 		err = puzzle.SavePuzzleByPID(puzzle.PID)
 		if err != nil {
-			log.Printf("[SubmitPuzzleHandler] Error: %s\n", err.Error())
+			log.Printf("[SubmitPuzzleHandler] Save Puzzle Error: %s\n", err.Error())
 		} else {
 			err = user.SaveUserByUID(user.UID)
 			if err != nil {
-				log.Printf("[SubmitPuzzleHandler] Error: %s\n", err.Error())
+				log.Printf("[SubmitPuzzleHandler] Save User Error: %s\n", err.Error())
 			}
 		}
 	} else {

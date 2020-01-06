@@ -38,5 +38,6 @@ func main() {
 	router.GET("/puzzle/get", handlers.GetPuzzleHandler)
 	router.POST("/puzzle/submit", handlers.SubmitPuzzleHandler)
 
+	log.Printf("Started Server\n")
 	log.Fatal(http.ListenAndServe("localhost:8080", Logger{router}))
 }
