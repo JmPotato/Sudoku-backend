@@ -1,6 +1,9 @@
 package generator
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+)
 
 //Sudoku quastion board
 type Sudoku struct {
@@ -70,39 +73,44 @@ func (s *Sudoku) CanInsert(x, y int, inp byte) bool {
 }
 
 // BackTrace use deep first search
-func (s *Sudoku) BackTrace(x, y int) {
-	if y == 9 {
-		x = x + 1
-		y = 0
-	}
-	if x == 9 {
-		s.solved = true
+func (s *Sudoku) BackTrace(ctx context.Context, x, y int) {
+	select {
+	case <-ctx.Done():
 		return
-	}
-	if s.board[x][y] == '.' {
-		for opt := 1; opt <= 9; opt++ {
-			val := byte(opt)
-			if !s.CanInsert(x, y, val) {
-				continue
-			}
-			s.Insert(x, y, val)
-			s.BackTrace(x, y+1)
-			if s.solved {
-				return
-			}
-			s.Remove(x, y)
+	default:
+		if y == 9 {
+			x = x + 1
+			y = 0
 		}
-	} else {
-		s.BackTrace(x, y+1)
+		if x == 9 {
+			s.solved = true
+			return
+		}
+		if s.board[x][y] == '.' {
+			for opt := 1; opt <= 9; opt++ {
+				val := byte(opt)
+				if !s.CanInsert(x, y, val) {
+					continue
+				}
+				s.Insert(x, y, val)
+				s.BackTrace(ctx, x, y+1)
+				if s.solved {
+					return
+				}
+				s.Remove(x, y)
+			}
+		} else {
+			s.BackTrace(ctx, x, y+1)
+		}
 	}
 }
 
 //SolveSudoku accept a 9*9 byte array and solve it
-func (s *Sudoku) SolveSudoku() bool {
+func (s *Sudoku) SolveSudoku(ctx context.Context) bool {
 	for i := 0; i < 9; i++ {
 		for j := 0; j < 9; j++ {
 			if s.board[i][j] == '.' {
-				s.BackTrace(i, j)
+				s.BackTrace(ctx, i, j)
 				return s.solved
 			}
 		}

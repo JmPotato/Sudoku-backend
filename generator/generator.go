@@ -1,6 +1,7 @@
 package generator
 
 import (
+	"context"
 	"errors"
 	"math/rand"
 	"strconv"
@@ -10,21 +11,23 @@ import (
 //Generate generates a question with unique solution
 func Generate(level int) string {
 	board := make(chan [9][9]byte, 10)
+	ctx, cancel := context.WithCancel(context.Background())
 	for i := 0; i < 200; i++ {
-		go func() {
+		go func(ctx context.Context) {
 			defer func() {
 				recover()
 			}()
-			s, err := LasVegas(11)
+			s, err := LasVegas(ctx, 11)
 			s.DigHole(81 - level)
 			if err == nil {
 				board <- s.board
 			}
-		}()
+		}(ctx)
 	}
 
 	result := ""
 	boardResult := <-board
+	cancel()
 	close(board)
 	for _, row := range boardResult {
 		for _, num := range row {
@@ -39,7 +42,7 @@ func Generate(level int) string {
 }
 
 //LasVegas algorithm generates a Sudoku solution, 99% success rate
-func LasVegas(n int) (*Sudoku, error) {
+func LasVegas(ctx context.Context, n int) (*Sudoku, error) {
 	var b [9][9]byte
 	for i := 0; i < 9; i++ {
 		for j := 0; j < 9; j++ {
@@ -61,7 +64,7 @@ func LasVegas(n int) (*Sudoku, error) {
 		}
 	}
 
-	if s.SolveSudoku() {
+	if s.SolveSudoku(ctx) {
 		return s, nil
 	}
 	return s, errors.New("Unsolvable")
